@@ -78,7 +78,7 @@ $ curl -X GET \
 ```
 
 #### View A Specefic Chat Of A Specefic Application
-> :token is the generated token in the response of the create new application request
+> :token is the generated token in the response of the create new application request  
 > :number is the generated number in the response of the create new chat request
 
 ```sh
@@ -87,7 +87,7 @@ $ curl -X GET \
 ```
 
 #### Create New Message
-> :token is the generated token in the response of the create new application request
+> :token is the generated token in the response of the create new application request  
 > :number is the generated number in the response of the create new chat request
 ```sh
 $ curl -X POST \
@@ -100,7 +100,7 @@ $ curl -X POST \
 
 #### View All Messages Of A Specefic Chat In A Specefic Application
 
-> :token is the generated token in the response of the create new application request
+> :token is the generated token in the response of the create new application request  
 > :number is the generated number in the response of the create new chat request
 
 ```sh
@@ -110,8 +110,8 @@ $ curl -X GET \
 
 #### View A Specefic Message Of A Specefic Chat In A Specefic Application
 
-> :token is the generated token in the response of the create new application request
-> :number is the generated number in the response of the create new chat request
+> :token is the generated token in the response of the create new application request  
+> :number is the generated number in the response of the create new chat request  
 > :messageNumber is the generated number in the response of the create new message request
 ```sh
 $ curl -X GET \
@@ -119,7 +119,7 @@ $ curl -X GET \
 ```
 
 #### Search In Messages Of A Specefic Chat In A Specefic Application (Partial Match)
-> :token is the generated token in the response of the create new application request
+> :token is the generated token in the response of the create new application request  
 > :number is the generated number in the response of the create new chat request
 ```sh
 $ curl -X POST \

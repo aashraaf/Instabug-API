@@ -1,0 +1,98 @@
+services:
+  ##########################
+  ### SETUP SERVER CONTAINER
+  ##########################
+  server:
+    # Tell docker what file to build the server from
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # The ports to expose
+    expose:
+      - 3000
+    # Port mapping
+    ports:
+      - 3000:3000
+    # Volumes to mount
+    volumes:
+      - .:/app
+    # Run command
+    command: sh -c "rm /app/tmp/pids/server.pid || true && bundle install && rails db:create && rails db:migrate && rails es:create_index && rails s -b 0.0.0.0"
+    # Connect to other containers
+    links:
+      - "redis"
+      - "rabbitmq"
+      - "es"
+      - "mysql"
+    restart: on-failure
+    depends_on:
+      - redis
+      - rabbitmq
+      - es
+      - mysql
+
+  es:
+    image: elasticsearch:7.17.5
+    expose:
+      - 9200
+    ports:
+      - 9200:9200
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis/redis-stack-server:latest
+    expose:
+      - 6379
+    ports:
+      - 6379:6379
+    restart: always
+
+  mysql:
+    image: mysql:latest
+    expose:
+      - 3306
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      - "MYSQL_ROOT_PASSWORD=rootpw"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    expose:
+      - 5672
+      - 15672
+    ports:
+      - 5672:5672
+      - 8080:15672
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  consumer:
+    build: .
+    # command: sh -c "WORKERS=Consumer rake sneakers:run"
+    command: sh -c "bundle install && bundle exec rake sneakers:run WORKERS=Consumer"
+    restart: always
+    volumes:
+      - .:/app
+    depends_on:
+      - server
+      - "redis"
+      - "rabbitmq"
+      - "es"
+    links:
+      - "redis"
+      - "rabbitmq"
+      - "es"
